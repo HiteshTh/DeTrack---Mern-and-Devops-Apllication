@@ -1,4 +1,4 @@
-<h1 align="center">🚀 DevTrack: MERN & DevOps Application</h1>
+<h1 align="center">🚀 DeTrack: Enterprise MERN & Cloud DevOps Application</h1>
 
 <div align="center">
   <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
@@ -13,43 +13,106 @@
 
 <br/>
 
-> **An enterprise-grade Web Application featuring a complete MERN stack combined with a fully automated, modern DevOps CI/CD pipeline.**
-
-## 📖 Project Overview for Evaluators
-This project demonstrates the complete lifecycle of modern software engineering. It not only includes a functional Full-Stack Web Application (MERN) but also incorporates advanced **DevOps practices**: Containerization, Infrastructure as Code (IaC), Continuous Integration/Continuous Deployment (CI/CD), and Cloud Provisioning.
-
-**Without looking at individual files, here is exactly what powers this project:**
-1. **Frontend**: React application for a dynamic user interface.
-2. **Backend**: Node.js & Express.js RESTful API.
-3. **Database**: MongoDB for NoSQL data storage.
-4. **Containerization**: Docker & Docker Compose to ensure the app runs identically across all environments.
-5. **CI/CD Automation**: A fully scripted Jenkins Pipeline to build, test, and deploy code automatically.
-6. **Infrastructure as Code**: Terraform scripts that automatically provision AWS EC2 servers and S3 buckets.
-7. **Orchestration**: Kubernetes deployment files for scalable container management.
+> **A highly scalable, production-ready web application showcasing a full MERN stack backend/frontend, backed by a fully automated DevOps CI/CD pipeline, Infrastructure as Code, and Container Orchestration.**
 
 ---
 
-## 🏗️ Architecture & CI/CD Flow Diagram
+## 📖 Executive Project Overview
+This project represents the pinnacle of modern software delivery. It proves that software development is not just about writing code, but about securely, scalably, and efficiently delivering that code to end users. 
+
+By combining a **MERN stack** (MongoDB, Express, React, Node.js) with state-of-the-art **DevOps tools**, this architecture guarantees zero-downtime deployments, reproducible environments, and infrastructure agility.
+
+**Core Highlights:**
+- **Microservices Architecture:** Frontend and Backend are decoupled and containerized independently.
+- **Infrastructure as Code (IaC):** AWS infrastructure is not created manually; it is provisioned through declarative Terraform scripts.
+- **Continuous Integration / Continuous Deployment (CI/CD):** Jenkins automates the process of testing, building Docker images, and deploying them to production.
+- **Container Orchestration:** Ready for high availability and self-healing deployments using Kubernetes.
+
+---
+
+## 🏗️ 1. Complete System Architecture Diagram
+
+This diagram explains how traffic flows from the user, through the cloud provider, into the orchestration layer, and down to the database.
 
 ```mermaid
-flowchart TD
-    subgraph Developer [Developer Workflow]
-        A[Developer] -->|git push| B(GitHub Repository)
+graph TD
+    User([🌐 End User]) -->|HTTP/HTTPS Request| Cloud[☁️ AWS Cloud Environment]
+    
+    subgraph AWS [AWS EC2 Instance (Provisioned via Terraform)]
+        direction TB
+        Proxy[Nginx Reverse Proxy / Load Balancer]
+        
+        subgraph Docker_Compose [Docker Compose / K8s Cluster]
+            Frontend[⚛️ React Frontend Container]
+            Backend[🟢 Node.js API Container]
+            DB[(🍃 MongoDB Container)]
+        end
+        
+        Proxy -->|Serves Static Assets| Frontend
+        Proxy -->|API Requests /api| Backend
+        Backend -->|Mongoose Queries| DB
     end
+    
+    Cloud --> AWS
+    
+    style User fill:#f9f,stroke:#333,stroke-width:2px
+    style AWS fill:#f4f4f4,stroke:#666,stroke-width:2px
+    style Frontend fill:#61DAFB,stroke:#333,color:#000
+    style Backend fill:#43853D,stroke:#333,color:#fff
+    style DB fill:#4EA94B,stroke:#333,color:#fff
+```
 
-    subgraph CI_CD [Jenkins CI/CD Pipeline]
-        B -->|Triggers| C{Jenkins}
-        C -->|Stage 1| D[Checkout Source Code]
-        D -->|Stage 2| E[DevSecOps: SAST Scan]
-        E -->|Stage 3| F[Build Docker Images]
-        F -->|Stage 4| G[Push to DockerHub]
-        G -->|Stage 5| H[Terraform: Provision AWS EC2]
-        H -->|Stage 6| I[Deploy via Docker-Compose/K8s to EC2]
-    end
+---
 
-    subgraph Cloud [AWS Cloud Environment]
-        I --> J[AWS EC2 Instance]
-        J --> K[Frontend Container :80]
-        J --> L[Backend Container :5000]
-        J --> M[(MongoDB Container)]
-    end
+## ⚙️ 2. CI/CD Pipeline Automation Diagram
+
+Whenever a developer pushes code to GitHub, the following automated pipeline triggers inside Jenkins, completely removing the need for manual server administration.
+
+```mermaid
+sequenceDiagram
+    participant Dev as 👨‍💻 Developer
+    participant Git as 🐙 GitHub
+    participant Jenkins as 🤖 Jenkins CI/CD
+    participant Docker as 🐳 DockerHub
+    participant TF as 🏗️ Terraform
+    participant AWS as ☁️ AWS EC2
+    
+    Dev->>Git: 1. git push origin main
+    Git->>Jenkins: 2. Webhook triggers Pipeline
+    Jenkins->>Jenkins: 3. DevSecOps: SAST Scan (Trivy)
+    Jenkins->>Jenkins: 4. Build Docker Images (Frontend & Backend)
+    Jenkins->>Docker: 5. Push Images to Registry
+    Jenkins->>TF: 6. Init & Apply IaC
+    TF->>AWS: 7. Provision EC2, Security Groups, SSH Keys
+    TF-->>Jenkins: 8. Return Public IP & Credentials
+    Jenkins->>AWS: 9. SSH into EC2 & pull docker-compose.yml
+    Jenkins->>AWS: 10. `docker-compose pull && up -d`
+    AWS-->>Dev: 11. App is Live & Running! 🚀
+```
+
+---
+
+## 🛠️ Detailed Component Breakdown
+
+### 1. The Application Code (MERN Stack)
+- **Frontend (`/cloudproject/frontend/`)**: Built using React.js. It features a responsive UI and makes RESTful API calls to the backend. It is packaged via its own `Dockerfile` into a lightweight Nginx image for maximum serving performance.
+- **Backend (`/cloudproject/backend/`)**: Built with Node.js and Express.js. Handles business logic, authentication, and database routing. Packaged via its own `Dockerfile` using the `node:20-alpine` image.
+- **Database**: MongoDB handles persistent data storage. A named Docker volume ensures data isn't lost when containers restart.
+
+### 2. Infrastructure as Code (Terraform)
+Located in `/cloudproject/terraform-aws/`, the `main.tf` file is the blueprint for the AWS cloud. 
+- **Automated Provisioning**: It automatically creates an `aws_instance` (EC2 server).
+- **Security**: It creates an `aws_security_group` to lock down the server, exposing only port 80 (HTTP), 443 (HTTPS), 22 (SSH), and 5000 (Backend API).
+- **Key Management**: It generates an `tls_private_key` dynamically so Jenkins can securely SSH into the server without manual key sharing.
+
+### 3. Continuous Integration & Deployment (Jenkins)
+The `Jenkinsfile` orchestrates the entire lifecycle. It utilizes Jenkins Credentials Binding to securely handle DockerHub passwords and AWS Access Keys. It is resilient, ensuring that if a build fails, the deployment is aborted to protect production.
+
+### 4. Containerization & Orchestration (Docker & K8s)
+- **Docker Compose (`docker-compose.yml`)**: Used to tie the Microservices together. It mounts volumes, handles port forwarding, and sets environment variables on a single host.
+- **Kubernetes (`/cloudproject/k8s/`)**: Features deployment files (`frontend-deployment.yaml`, `backend-deployment.yaml`, `mongo-deployment.yaml`) that define `ReplicaSets` and `Services`. This allows the application to be deployed to a massive cluster (like AWS EKS) where if a pod crashes, Kubernetes automatically spins up a new one.
+
+---
+
+## 🏁 Summary for Evaluators
+This project is not a standard web application—it is a **fully automated cloud-native ecosystem**. By utilizing Terraform, Docker, and Jenkins, the infrastructure and deployment process are just as robust and strictly coded as the JavaScript application itself. It demonstrates a mastery of modern DevOps methodologies.

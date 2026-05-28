@@ -86,6 +86,8 @@ pipeline {
             steps {
                 echo "Deploying to EC2 at ${EC2_IP}..."
                 sh "sleep 30"
+                sh "ssh -i devtrack-key.pem -o StrictHostKeyChecking=no ubuntu@${EC2_IP} 'mkdir -p /home/ubuntu/monitoring'"
+                sh "scp -i devtrack-key.pem -o StrictHostKeyChecking=no cloudproject/monitoring/prometheus.yml ubuntu@${EC2_IP}:/home/ubuntu/monitoring/prometheus.yml"
                 sh "scp -i devtrack-key.pem -o StrictHostKeyChecking=no cloudproject/terraform-aws/docker-compose.prod.yml ubuntu@${EC2_IP}:/home/ubuntu/docker-compose.yml"
                 sh """
                     ssh -i devtrack-key.pem -o StrictHostKeyChecking=no ubuntu@${EC2_IP} '
