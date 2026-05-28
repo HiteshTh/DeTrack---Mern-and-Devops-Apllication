@@ -53,3 +53,33 @@ flowchart TD
         J --> L[Backend Container :5000]
         J --> M[(MongoDB Container)]
     end
+📂 Project Structure Guide
+A quick tour of the repository to understand where everything lives:
+
+📁 cloudproject/frontend/ ── React Application
+Contains all UI components and the Dockerfile used to build the frontend image.
+📁 cloudproject/backend/ ── Node.js REST API
+Contains API routes, server logic, and the backend Dockerfile.
+📁 cloudproject/terraform-aws/ ── Infrastructure as Code (IaC)
+main.tf: The Terraform script that automatically provisions the AWS EC2 instance, configures Security Groups, and sets up SSH keys.
+📁 cloudproject/k8s/ ── Kubernetes Configurations
+.yaml files defining Pods, Deployments, and Services for scalable container orchestration.
+📄 Jenkinsfile ── The Brain of the CI/CD Pipeline
+A Declarative Jenkins pipeline script that automates code checkout, security scanning, image building, AWS provisioning, and application deployment.
+📄 docker-compose.yml ── Local Development & Deployment
+Ties the frontend, backend, and database together to be spun up with a single command.
+🚀 How The Pipeline Works
+When code is pushed to the main branch, Jenkins automatically kicks off the pipeline defined in the Jenkinsfile.
+
+🔒 Security First: Simulates a Trivy Security scan on the codebase.
+🐳 Build & Package: Docker builds the frontend and backend microservices and securely pushes them to DockerHub.
+☁️ Cloud Provisioning: Terraform connects to AWS, checks if the EC2 infrastructure exists, and provisions it if it doesn't, returning the live Public IP.
+🚢 Automated Deployment: Jenkins SSH's into the newly created EC2 instance, pulls the latest images from DockerHub, and starts the application using docker-compose.
+🛠️ Key Technologies Highlight
+Technology	Role in Project
+MongoDB, Express, React, Node	Core application stack.
+Docker	Creating isolated application containers.
+Terraform	Automating AWS infrastructure setup (VPCs, EC2, Keys).
+Jenkins	Orchestrating the entire CI/CD lifecycle.
+AWS (EC2 & S3)	Cloud hosting and asset storage.
+Kubernetes	(Optional/Advanced) Managing containers at scale.
