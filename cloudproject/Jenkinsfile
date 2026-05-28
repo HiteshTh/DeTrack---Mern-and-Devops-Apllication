@@ -96,7 +96,7 @@ pipeline {
                         done
                         export DOCKERHUB_USERNAME=${DOCKERHUB_USER}
                         export AWS_S3_BUCKET=${S3_BUCKET}
-                        sudo -E docker-compose down
+                        sudo -E docker-compose down || true
                         sudo -E docker-compose pull
                         sudo -E docker-compose up -d
                     '
