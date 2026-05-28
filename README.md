@@ -1,4 +1,4 @@
-<h1 align="center">🚀 DeVTrack: MERN & DevOps Application</h1>
+<h1 align="center">🚀 DeTrack: MERN & DevOps Application</h1>
 
 <div align="center">
   <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
@@ -53,10 +53,3 @@ flowchart TD
         J --> L[Backend Container :5000]
         J --> M[(MongoDB Container)]
     end
-
-MongoDB, Express, React, Node	Core application stack.
-Docker	Creating isolated application containers.
-Terraform	Automating AWS infrastructure setup (VPCs, EC2, Keys).
-Jenkins	Orchestrating the entire CI/CD lifecycle.
-AWS (EC2 & S3)	Cloud hosting and asset storage.
-Kubernetes	(Optional/Advanced) Managing containers at scale.
