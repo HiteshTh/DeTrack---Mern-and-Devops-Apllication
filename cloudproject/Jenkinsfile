@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     environment {
+        DOCKER_BUILDKIT = '1'
         DOCKERHUB_USER = 'hiteshthakur62674'
         DOCKER_FRONTEND_IMAGE = "${DOCKERHUB_USER}/devtrack-frontend"
         DOCKER_BACKEND_IMAGE = "${DOCKERHUB_USER}/devtrack-backend"
@@ -26,7 +27,7 @@ pipeline {
 
         stage('Build & Push Frontend') {
             steps {
-                dir('frontend') {
+                dir('cloudproject/frontend') {
                     withCredentials([usernamePassword(
                         credentialsId: 'dockerhub-credentials',
                         usernameVariable: 'DOCKER_USER',
@@ -44,7 +45,7 @@ pipeline {
 
         stage('Build & Push Backend') {
             steps {
-                dir('backend') {
+                dir('cloudproject/backend') {
                     withCredentials([usernamePassword(
                         credentialsId: 'dockerhub-credentials',
                         usernameVariable: 'DOCKER_USER',
@@ -67,14 +68,14 @@ pipeline {
                     string(credentialsId: 'aws-access-key', variable: 'AWS_ACCESS_KEY_ID'),
                     string(credentialsId: 'aws-secret-key', variable: 'AWS_SECRET_ACCESS_KEY')
                 ]) {
-                    dir('terraform-aws') {
+                    dir('cloudproject/terraform-aws') {
                         sh 'terraform init'
                         sh 'terraform apply -auto-approve'
                         script {
                             env.EC2_IP = sh(script: 'terraform output -raw public_ip', returnStdout: true).trim()
                             env.S3_BUCKET = sh(script: 'terraform output -raw s3_bucket', returnStdout: true).trim()
-                            sh 'terraform output -raw private_key_pem > ../devtrack-key.pem'
-                            sh 'chmod 400 ../devtrack-key.pem'
+                            sh 'terraform output -raw private_key_pem > ../../devtrack-key.pem'
+                            sh 'chmod 400 ../../devtrack-key.pem'
                         }
                     }
                 }
@@ -85,7 +86,7 @@ pipeline {
             steps {
                 echo "Deploying to EC2 at ${EC2_IP}..."
                 sh "sleep 30"
-                sh "scp -i devtrack-key.pem -o StrictHostKeyChecking=no terraform-aws/docker-compose.prod.yml ubuntu@${EC2_IP}:/home/ubuntu/docker-compose.yml"
+                sh "scp -i devtrack-key.pem -o StrictHostKeyChecking=no cloudproject/terraform-aws/docker-compose.prod.yml ubuntu@${EC2_IP}:/home/ubuntu/docker-compose.yml"
                 sh """
                     ssh -i devtrack-key.pem -o StrictHostKeyChecking=no ubuntu@${EC2_IP} '
                         while ! command -v docker &> /dev/null; do
