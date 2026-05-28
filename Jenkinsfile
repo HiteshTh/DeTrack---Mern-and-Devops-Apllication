@@ -73,6 +73,7 @@ pipeline {
                         script {
                             env.EC2_IP = sh(script: 'terraform output -raw public_ip', returnStdout: true).trim()
                             env.S3_BUCKET = sh(script: 'terraform output -raw s3_bucket', returnStdout: true).trim()
+                            sh 'rm -f ../../devtrack-key.pem || true'
                             sh 'terraform output -raw private_key_pem > ../../devtrack-key.pem'
                             sh 'chmod 400 ../../devtrack-key.pem'
                         }
