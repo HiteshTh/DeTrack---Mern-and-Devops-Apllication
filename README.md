@@ -1,1 +1,1 @@
-﻿# DeTrack---Mern-and-Devops-Aplication
+﻿# DeTrack---Mern-and-Devops-Application
