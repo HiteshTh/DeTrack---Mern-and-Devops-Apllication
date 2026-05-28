@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devtrack-frontend
+  labels:
+    app: devtrack-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: devtrack-frontend
+  template:
+    metadata:
+      labels:
+        app: devtrack-frontend
+    spec:
+      containers:
+      - name: devtrack-frontend
+        image: devtrack-frontend:latest
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  type: NodePort
+  selector:
+    app: devtrack-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30080

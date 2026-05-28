@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devtrack-backend
+  labels:
+    app: devtrack-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: devtrack-backend
+  template:
+    metadata:
+      labels:
+        app: devtrack-backend
+    spec:
+      containers:
+      - name: devtrack-backend
+        image: devtrack-backend:latest
+        ports:
+        - containerPort: 5000
+        env:
+        - name: MONGO_URI
+          value: "mongodb://mongo-service:27017/devtrack"
+        - name: AWS_ENDPOINT
+          # Use host machine's IP where LocalStack is running if in Minikube
+          value: "http://host.minikube.internal:4566" 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  type: ClusterIP
+  selector:
+    app: devtrack-backend
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000

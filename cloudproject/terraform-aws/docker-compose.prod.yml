@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  # MongoDB (backend persistence)
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    restart: always
+
+  # Backend API
+  backend:
+    image: ${DOCKERHUB_USERNAME}/devtrack-backend:latest
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/devtrack
+      - AWS_S3_BUCKET=${AWS_S3_BUCKET}
+    depends_on:
+      - mongo
+    restart: always
+
+  # Frontend Web App
+  frontend:
+    image: ${DOCKERHUB_USERNAME}/devtrack-frontend:latest
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: always
+
+volumes:
+  mongo_data:
