@@ -77,10 +77,10 @@ resource "aws_security_group" "devtrack_sg" {
   }
 }
 
-# 3. Free Tier EC2 Instance (t2.micro)
+# 3. EC2 Instance (use a free-tier-eligible micro type if available)
 resource "aws_instance" "devtrack_server" {
   ami           = "ami-0c7217cdde317cfec" # Ubuntu 22.04 LTS (us-east-1)
-  instance_type = "t2.micro"
+  instance_type = "t3.micro"
   key_name      = aws_key_pair.devtrack_key_pair.key_name
   
   vpc_security_group_ids = [aws_security_group.devtrack_sg.id]
