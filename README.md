@@ -38,7 +38,7 @@ This diagram explains how traffic flows from the user, through the cloud provide
 graph TD
     User([🌐 End User]) -->|HTTP/HTTPS Request| Cloud[☁️ AWS Cloud Environment]
     
-    subgraph AWS [AWS EC2 Instance (Provisioned via Terraform)]
+    subgraph AWS ["AWS EC2 Instance - Provisioned via Terraform"]
         direction TB
         Proxy[Nginx Reverse Proxy / Load Balancer]
         
@@ -60,6 +60,7 @@ graph TD
     style Frontend fill:#61DAFB,stroke:#333,color:#000
     style Backend fill:#43853D,stroke:#333,color:#fff
     style DB fill:#4EA94B,stroke:#333,color:#fff
+
 ```
 
 ---
